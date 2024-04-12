@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .search-box {
+            float: right;
+            padding: 10px;
+        }
+
+        .search-box input[type="text"] {
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .search-box button {
+            padding: 6px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add padding to the content to prevent it from being hidden behind the navbar */
+        .content {
+            padding-top: 60px; /* Adjust the value based on the navbar height */
+        }
+
+        /* Style the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Style the delete button */
+        .delete-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="{% url 'todo-page' %}">Home</a>
+        <a href="http://127.0.0.1:8000/admin/login/?next=/admin/">Admin</a>
+       
+        <div class="search-box">
+            <form action=" " method="GET">
+                <input type="text" name="query" placeholder="Search...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="content">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Delete</th>
+                <th>Modify/Editing</th>
+            </tr>
+            {% for item in all_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.Title }}</td>
+                <td>{{ item.Description }}</td>
+                <td>
+                    <form action="{% url 'delete-data' item.id %}" method="post" id="delete-form-{{ item.id }}">
+                        {% csrf_token %}
+                        <button type="button" class="delete-btn" onclick="confirmDelete({{ item.id }})">Delete</button>
+                    </form>
+                </td>
+                <td><a href="{% url 'edit-data' item.id %}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        function confirmDelete(itemId) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                document.getElementById('delete-form-' + itemId).submit();
+            } else {
+                // Do nothing or handle cancel action
+            }
+        }
+    </script>
+</body>
+</html>
